@@ -161,11 +161,7 @@ import {
   eliminarCliente as apiEliminarCliente,
 } from "../services/clientesService.js";
 
-export default function Clientes() {
-  // Nota: el componente usa siempre la DB. El mock fue desactivado en
-  // src/services/clientesService.js. Aquí mantenemos estado local sólo para
-  // renderizar los datos que vienen de la API y para manejar el formulario.
-  const [clientes, setClientes] = useState([]);
+export default function Clientes({ clientes, setClientes, onSelect }) {
   const [form, setForm] = useState({ nombre: "", email: "", telefono: "" });
   const [loading, setLoading] = useState(false);
 
@@ -189,8 +185,8 @@ export default function Clientes() {
   };
 
   useEffect(() => {
-    cargar();
-  }, []);
+    if (setClientes) cargar();
+  }, [setClientes]);
 
   const enviar = async (e) => {
     e.preventDefault();
@@ -223,7 +219,7 @@ export default function Clientes() {
     setLoading(true);
     try {
       await apiEliminarCliente(id);
-      // actualizar lista local
+      // actualizar lista
       setClientes((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
       console.error("Error eliminando cliente:", err);

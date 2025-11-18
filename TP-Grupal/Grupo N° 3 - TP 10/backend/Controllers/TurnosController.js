@@ -4,9 +4,15 @@ import { pool } from "../db.js";
 // Obtener turnos (por fecha o cliente)
 export const getTurnos = async (req, res) => {
   const { fecha, cliente_id } = req.query;
-  const cond = fecha ? "WHERE DATE(t.inicio)=?" :
-        cliente_id ? "WHERE t.cliente_id=?" : "";
-  const val = fecha ? [fecha] : cliente_id ? [cliente_id] : [];
+  let cond = "";
+  const val = [];
+  if (fecha) {
+    cond = "WHERE DATE(t.inicio)=? AND t.estado = 'pendiente'";
+    val.push(fecha);
+  } else if (cliente_id) {
+    cond = "WHERE t.cliente_id=?";
+    val.push(cliente_id);
+  }
   const q = `
     SELECT t.*, c.nombre AS cliente_nombre, s.nombre AS servicio_nombre
     FROM turnos t
@@ -36,7 +42,7 @@ export const CreateTurnos = async (req, res) => {
     const [v] = await pool.query(
       `SELECT COUNT(*) AS n
        FROM turnos
-       WHERE estado = 'programado'
+       WHERE estado = 'pendiente'
        AND inicio < DATE_ADD(?, INTERVAL ? MINUTE)
        AND fin > ?`,
       [inicio, s.duracion_minutos, inicio]
@@ -45,7 +51,7 @@ export const CreateTurnos = async (req, res) => {
 
     const [r] = await pool.query(
       `INSERT INTO turnos (cliente_id, servicio_id, inicio, fin, estado)
-       VALUES (?, ?, ?, DATE_ADD(?, INTERVAL ? MINUTE), 'programado')`,
+       VALUES (?, ?, ?, DATE_ADD(?, INTERVAL ? MINUTE), 'pendiente')`,
       [cliente_id, servicio_id, inicio, inicio, s.duracion_minutos]
     );
 

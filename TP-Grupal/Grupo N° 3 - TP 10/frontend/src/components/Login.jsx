@@ -1,23 +1,22 @@
 // src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 import "../styles/Login.css";
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { login, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Login simulado: usuario: admin, password: 1234
-    if (usuario === "admin" && password === "1234") {
-      localStorage.setItem("loggedIn", "true"); // guardamos login simulado
+    try {
+      await login(usuario, password);
       navigate("/home");
-    } else {
-      setError("Usuario o contraseña incorrecta");
+    } catch (err) {
+      // Error manejado en store
     }
   };
 
@@ -30,14 +29,18 @@ export default function Login() {
           placeholder="Usuario"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button type="submit">Ingresar</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Cargando..." : "Ingresar"}
+        </button>
         {error && <p className="error">{error}</p>}
       </form>
     </div>

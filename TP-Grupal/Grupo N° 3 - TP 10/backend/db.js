@@ -8,3 +8,4 @@ export const pool = await mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10
 });
+

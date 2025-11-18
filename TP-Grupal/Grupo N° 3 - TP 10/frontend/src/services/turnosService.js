@@ -11,7 +11,7 @@ export const fetchTurnos = async (fecha = null, cliente_id = null) => {
 
 export const agregarTurno = async (turno) => {
   const { clienteId, servicioId, fechaHora } = turno;
-  const inicio = new Date(fechaHora).toISOString().slice(0, 19).replace("T", " ");
+  const inicio = fechaHora + ':00'; // Agregar segundos
   return await post("/turnos", {
     cliente_id: clienteId,
     servicio_id: servicioId,

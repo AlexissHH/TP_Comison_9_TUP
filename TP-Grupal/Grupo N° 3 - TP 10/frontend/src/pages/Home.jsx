@@ -148,7 +148,7 @@ export default function Home() {
       </section>
 
       <section id="historial" className="section-container">
-        <HistorialCliente turnos={turnos} clienteSeleccionado={clienteSeleccionado} />
+        <HistorialCliente clienteSeleccionado={clienteSeleccionado} />
       </section>
 
       <Footer />

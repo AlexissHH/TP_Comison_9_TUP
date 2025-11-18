@@ -1,10 +1,11 @@
 // src/components/PrivateRoute.jsx
 import { Navigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 
 export default function PrivateRoute({ children }) {
-  const loggedIn = localStorage.getItem("loggedIn");
+  const isLogged = useAuthStore((state) => Boolean(state.user));
 
-  if (!loggedIn) {
+  if (!isLogged) {
     return <Navigate to="/" replace />;
   }
 

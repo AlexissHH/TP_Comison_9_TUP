@@ -119,13 +119,36 @@
 // }
 
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchTurnos } from "../services/turnosService";
 import "../styles/HistoriaCliente.css";
 
 export default function HistorialCliente({
-  turnos = [],
   clienteSeleccionado = null,
 }) {
+  const [turnos, setTurnos] = useState([]);
+
+  const cargarTurnos = async () => {
+    if (!clienteSeleccionado) return;
+    try {
+      const data = await fetchTurnos(null, clienteSeleccionado.id);
+      setTurnos(data);
+    } catch (err) {
+      console.error("Error cargando historial:", err);
+    }
+  };
+
+  useEffect(() => {
+    cargarTurnos();
+
+    // Escuchar cambios en turnos
+    const handleChanged = () => cargarTurnos();
+    window.addEventListener("turnosChanged", handleChanged);
+    return () => {
+      window.removeEventListener("turnosChanged", handleChanged);
+    };
+  }, [clienteSeleccionado]);
+
   if (!clienteSeleccionado)
     return <p className="info-msg">Selecciona un cliente para ver historial.</p>;
 

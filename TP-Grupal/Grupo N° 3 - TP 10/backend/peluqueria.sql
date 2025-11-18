@@ -5,6 +5,14 @@
 CREATE DATABASE IF NOT EXISTS peluqueria CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE peluqueria;
 
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  rol ENUM('admin', 'empleado') DEFAULT 'empleado'
+);
+
+
 -- Tabla: clientes
 CREATE TABLE IF NOT EXISTS clientes (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -41,6 +49,10 @@ CREATE TABLE IF NOT EXISTS turnos (
   CONSTRAINT fk_turnos_clientes FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE,
   CONSTRAINT fk_turnos_servicios FOREIGN KEY (servicio_id) REFERENCES servicios(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO usuarios (nombre, password, rol) VALUES
+('admin', '1234', 'admin'),
+('empleado', '1234', 'empleado');
 
 -- Datos de ejemplo: clientes
 INSERT INTO clientes (nombre, correo, telefono)

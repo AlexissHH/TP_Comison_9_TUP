@@ -125,6 +125,8 @@ export default function TurnosHoy() {
     try {
       await actualizarTurno(id, { estado });
       cargarTurnos();
+      // Notificar a otros componentes
+      window.dispatchEvent(new CustomEvent("turnosChanged"));
     } catch (err) {
       alert("Error al actualizar estado");
     }
@@ -135,6 +137,8 @@ export default function TurnosHoy() {
     try {
       await eliminarTurno(id);
       cargarTurnos();
+      // Notificar a otros componentes
+      window.dispatchEvent(new CustomEvent("turnosChanged"));
     } catch (err) {
       alert("Error al eliminar turno");
     }
